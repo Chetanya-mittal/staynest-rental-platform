@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+import propertyRoutes from './routes/propertyRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -21,7 +22,9 @@ app.use(cors({
 app.use(express.json()); // lets us read JSON from request bodies
 app.use(cookieParser()); // lets us read req.cookies
 
+// Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/properties', propertyRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
