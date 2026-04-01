@@ -16,6 +16,9 @@ const setRefreshTokenCookie = (res, token) => {
   });
 };
 
+// @desc    Register new user
+// @route   POST /api/auth/register
+// @access  Public
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -52,6 +55,9 @@ export const registerUser = async (req, res) => {
   }
 };
 
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -88,6 +94,9 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// @desc    Get logged in user profile
+// @route   GET /api/auth/me
+// @access  Private
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -97,6 +106,9 @@ export const getMe = async (req, res) => {
   }
 };
 
+// @desc    Refresh access token
+// @route   POST /api/auth/refresh
+// @access  Protected (Refresh Token Required)
 export const refreshAccessToken = (req, res) => {
   try {
     const token = req.cookies.refreshToken;
@@ -115,6 +127,9 @@ export const refreshAccessToken = (req, res) => {
   }
 };
 
+// @desc    Logout user
+// @route   POST /api/auth/logout
+// @access  Protected (Refresh Token Required)
 export const logoutUser = (req, res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,

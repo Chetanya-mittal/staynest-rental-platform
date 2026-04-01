@@ -13,7 +13,6 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, no token' });
     }
 
-    // Now uses ACCESS secret specifically
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     req.user = await User.findById(decoded.id).select('-password');
 

@@ -16,11 +16,11 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // your React app URL
+  origin: 'http://localhost:5173', // React app URL
   credentials: true,               // allows cookies to be sent cross-origin
 }));
-app.use(express.json()); // lets us read JSON from request bodies
-app.use(cookieParser()); // lets us read req.cookies
+app.use(express.json()); // to read JSON from request bodies
+app.use(cookieParser()); // to read req.cookies
 
 // Routes
 app.use('/api/auth', authRoutes);

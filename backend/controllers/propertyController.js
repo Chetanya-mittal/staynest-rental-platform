@@ -1,15 +1,69 @@
 import Property from '../models/Property.js';
 
-// @desc    Get all properties
+// @desc    Get all properties with search, filter, pagination
 // @route   GET /api/properties
 // @access  Public
 export const getAllProperties = async (req, res) => {
   try {
-    const properties = await Property.find({ isAvailable: true })
-      .populate('host', 'name email')  // only fetch name + email from User
-      .sort({ createdAt: -1 });        // newest first
+    const {
+      city,
+      state,
+      country,
+      minPrice,
+      maxPrice,
+      guests,
+      page = 1,      // default to page 1
+      limit = 10,    // default 10 results per page
+    } = req.query;
 
-    res.status(200).json(properties);
+    const query = { isAvailable: true };
+
+    if (city) {
+      // 'i' flag = case insensitive so 'mumbai' matches 'Mumbai'
+      query['location.city'] = { $regex: city, $options: 'i' };
+    }
+
+    if (state) {
+      query['location.state'] = { $regex: state, $options: 'i' };
+    }
+
+    if (country) {
+      query['location.country'] = { $regex: country, $options: 'i' };
+    }
+
+    if (guests) {
+      query.maxGuests = { $gte: Number(guests) };
+    }
+
+    if (minPrice || maxPrice) {
+      query.pricePerNight = {};
+      if (minPrice) query.pricePerNight.$gte = Number(minPrice);
+      if (maxPrice) query.pricePerNight.$lte = Number(maxPrice);
+    }
+
+    // Pagination
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Run both queries in parallel for efficiency
+    const [properties, total] = await Promise.all([
+      Property.find(query)
+        .populate('host', 'name email')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum),
+      Property.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      properties,
+      currentPage: pageNum,
+      totalPages: Math.ceil(total / limitNum),
+      totalProperties: total,
+      hasNextPage: pageNum < Math.ceil(total / limitNum),
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
