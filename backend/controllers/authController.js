@@ -6,6 +6,8 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/generateToken.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
 // Reusable helper to set the refresh token cookie
 const setRefreshTokenCookie = (res, token) => {
@@ -20,121 +22,109 @@ const setRefreshTokenCookie = (res, token) => {
 // @desc    Register new user
 // @route   POST /api/auth/register
 // @access  Public
-export const registerUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+export const registerUser = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Please provide all fields" });
-    }
+  if (!name || !email || !password) {
+    throw new AppError("Please provide all fields", 400);
+  }
 
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({ message: "Invalid email" });
-    }
+  if (!validator.isEmail(email)) {
+    throw new AppError("Invalid email", 400);
+  }
 
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ error: "Password must be at least 6 characters long" });
-    }
+  if (password.length < 6) {
+    throw new AppError("Password must be at least 6 characters long", 400);
+  }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new AppError("User already exists", 400);
+  }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await User.create({ name, email, password: hashedPassword });
+  const user = await User.create({ name, email, password: hashedPassword });
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
 
-    setRefreshTokenCookie(res, refreshToken);
+  setRefreshTokenCookie(res, refreshToken);
 
-    res.status(201).json({
+  res.status(201).json({
+    success: true,
+    data: {
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
       accessToken, // frontend stores this in Redux/memory
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+    },
+  });
+});
 
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-export const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Please provide email and password" });
-    }
+  if (!email || !password) {
+    throw new AppError("Please provide email and password", 400);
+  }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError("Invalid email or password", 401);
+  }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new AppError("Invalid email or password", 401);
+  }
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
 
-    setRefreshTokenCookie(res, refreshToken);
+  setRefreshTokenCookie(res, refreshToken);
 
-    res.status(200).json({
+  res.status(200).json({
+    success: true,
+    data: {
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
       accessToken,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+    },
+  });
+});
 
 // @desc    Get logged in user profile
 // @route   GET /api/auth/me
 // @access  Private
-export const getMe = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const getMe = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).select("-password");
+  res.status(200).json({ success: true, data: user });
+});
 
 // @desc    Refresh access token
 // @route   POST /api/auth/refresh
 // @access  Protected (Refresh Token Required)
 export const refreshAccessToken = (req, res) => {
-  try {
-    const token = req.cookies.refreshToken;
+  const token = req.cookies.refreshToken;
 
-    if (!token) {
-      return res.status(401).json({ message: "No refresh token" });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-    const newAccessToken = generateAccessToken(decoded.id);
-
-    res.status(200).json({ accessToken: newAccessToken });
-  } catch (error) {
-    res.status(401).json({ message: "Invalid or expired refresh token" });
+  if (!token) {
+    throw new AppError("No refresh token", 401);
   }
+
+  const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+  const newAccessToken = generateAccessToken(decoded.id);
+
+  res
+    .status(200)
+    .json({ success: true, data: { accessToken: newAccessToken } });
 };
 
 // @desc    Logout user
@@ -146,5 +136,5 @@ export const logoutUser = (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   });
-  res.status(200).json({ message: "Logged out successfully" });
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 };
