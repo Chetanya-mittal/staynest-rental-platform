@@ -1,3 +1,4 @@
+import dns from "dns";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -8,6 +9,12 @@ import propertyRoutes from "./routes/propertyRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 import AppError from "./utils/AppError.js";
+
+// Setting DNS
+dns.setServers([
+  '1.1.1.1',
+  '8.8.8.8'
+]);
 
 // Load environment variables
 dotenv.config();
