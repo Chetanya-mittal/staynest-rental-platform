@@ -2,7 +2,7 @@
 
 StayNest is a rental booking platform backend built with Node.js, Express, and MongoDB. This repository currently contains the full backend API for user authentication, property management, and booking workflows.
 
-## 🚀 Features
+## Features
 
 - User registration and login with JWT access tokens
 - Refresh token support via secure HTTP-only cookies
@@ -14,7 +14,7 @@ StayNest is a rental booking platform backend built with Node.js, Express, and M
 - Booking cancellation
 - Centralized error handling and validation
 
-## 🧩 Tech Stack
+## Tech Stack
 
 - Node.js
 - Express
@@ -25,7 +25,7 @@ StayNest is a rental booking platform backend built with Node.js, Express, and M
 - cors and cookie-parser
 - validator for request validation
 
-## 📁 Project Structure
+## Project Structure
 
 - `backend/server.js` — application entry point
 - `backend/config/db.js` — MongoDB connection logic
@@ -35,7 +35,7 @@ StayNest is a rental booking platform backend built with Node.js, Express, and M
 - `backend/middleware/` — authentication and error handling
 - `backend/utils/` — helper utilities for token generation, async handling, and date validation
 
-## ⚙️ Backend API Endpoints
+## Backend API Endpoints
 
 ### Authentication
 
@@ -82,14 +82,14 @@ StayNest is a rental booking platform backend built with Node.js, Express, and M
 | GET | `/api/bookings/:id` | Get booking details | Yes | Guest or host only |
 | DELETE | `/api/bookings/:id` | Cancel a booking | Yes | Guest only |
 
-## 🔐 Authentication
+## Authorization
 
 - Access tokens are provided as Bearer tokens in the `Authorization` header
 - Refresh tokens are stored in an HTTP-only cookie named `refreshToken`
 - Protected routes use `backend/middleware/authMiddleware.js`
 - Token secrets and expiry values are configured via environment variables
 
-## 🗄️ Database Models
+## Database Models
 
 ### User
 
@@ -149,7 +149,7 @@ Represents a booking/reservation made by a guest for a property.
 }
 ```
 
-## 🧪 Getting Started
+## Getting Started
 
 1. Open a terminal in the repo root
 2. Install dependencies:
@@ -184,7 +184,7 @@ Represents a booking/reservation made by a guest for a property.
    http://localhost:5000/
    ```
 
-## 💡 Notes
+## Notes
 
 - The backend currently allows CORS from `http://localhost:5173` in `backend/server.js`. Update this if your frontend uses a different origin.
 - Booking dates are validated so check-in cannot be in the past and check-out must be after check-in.
@@ -192,7 +192,7 @@ Represents a booking/reservation made by a guest for a property.
 - Hosts cannot book their own properties.
 - The app uses ES modules (`type: module`) in `backend/package.json`.
 
-## 📌 Next Improvements
+## Next Improvements
 
 Future enhancements could include:
 
@@ -202,10 +202,10 @@ Future enhancements could include:
 - improved host verification workflows
 - availability calendars and booking windows
 
-## 🏁 Summary
+## Summary
 
 This repository currently contains the StayNest backend API for rental booking operations. It is ready to power a frontend client with authentication, property management, and booking flows.
 
-## 👤 Author
+## Author
 
 ### Chetanya Mittal
