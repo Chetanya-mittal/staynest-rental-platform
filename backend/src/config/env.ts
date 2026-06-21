@@ -10,14 +10,14 @@ const envSchema = z.object({
     .default("development"),
   PORT: z.coerce.number().int().positive().default(5000),
 
-  MONGO_URI: z.string().min(1, "MONGO_URI is required"),
+  MONGO_URI: z.string().min(1, { error: "MONGO_URI is required" }),
 
   JWT_ACCESS_SECRET: z
     .string()
-    .min(32, "JWT_ACCESS_SECRET should be at least 32 characters"),
+    .min(32, { error: "JWT_ACCESS_SECRET should be at least 32 characters" }),
   JWT_REFRESH_SECRET: z
     .string()
-    .min(32, "JWT_REFRESH_SECRET should be at least 32 characters"),
+    .min(32, { error: "JWT_REFRESH_SECRET should be at least 32 characters" }),
   ACCESS_TOKEN_EXPIRY: z.string().default("15m"),
   REFRESH_TOKEN_EXPIRY: z.string().default("7d"),
 });

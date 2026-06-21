@@ -1,9 +1,12 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import env from "./config/env.js";
+import AppError from "./utils/AppError.js";
+import errorHandler from "./middleware/errorMiddleware.js";
+import authRouter from "./routes/auth.route.js";
 
 const app: Application = express();
 
@@ -19,9 +22,20 @@ app.use(express.json()); // to read JSON from request body
 app.use(express.urlencoded({ extended: true })); // to read HTML form data
 app.use(cookieParser()); // to read req.cookies
 
+// Routes
+app.use("/api/v1/auth", authRouter);
+
 // Base Route
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "StayNest API is running 🏡" });
 });
+
+// Catch all undefined routes
+app.use((req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Route ${req.method} ${req.originalUrl} not found`, 404));
+});
+
+// Global error handler — must be last, must have 4 params
+app.use(errorHandler);
 
 export default app;
