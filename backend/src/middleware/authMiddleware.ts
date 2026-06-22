@@ -15,10 +15,8 @@ const protect = asyncHandler(async (req, res, next) => {
     throw new AppError("No token", 401);
   }
 
-  const decoded = jwt.verify(token, env.JWT_ACCESS_SECRET);
-  const currentUser = await User.findById((decoded as any).id).select(
-    "-password",
-  );
+  const decoded = jwt.verify(token, env.JWT_ACCESS_SECRET) as jwt.JwtPayload;
+  const currentUser = await User.findById(decoded.id).select("-password");
 
   if (!currentUser) {
     throw new AppError(
