@@ -195,3 +195,40 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
+
+// @desc    Logout all
+// @route   POST /api/auth/logout-all
+// @access  Protected (Refresh Token Required)
+export const logoutAll = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    throw new AppError("No refresh token", 401);
+  }
+
+  const decoded = jwt.verify(
+    refreshToken,
+    env.JWT_REFRESH_SECRET,
+  ) as jwt.JwtPayload;
+
+  await Session.updateMany(
+    {
+      userId: decoded.id,
+      revoke: false,
+    },
+    {
+      revoke: true,
+    },
+  );
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out from all devices successfully",
+  });
+});
