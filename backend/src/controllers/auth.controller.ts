@@ -112,7 +112,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 export const getMe: RequestHandler = (req, res) => {
-  res.status(200).json({ success: true, data: req.user });
+  res.status(200).json(new ApiResponse(200, req.user));
 };
 
 // @desc    Refresh access token

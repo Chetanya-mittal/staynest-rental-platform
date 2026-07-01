@@ -7,6 +7,7 @@ import env from "./config/env.js";
 import AppError from "./utils/AppError.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 import authRouter from "./routes/auth.route.js";
+import propertyRouter from "./routes/property.route.js";
 
 const app: Application = express();
 
@@ -24,6 +25,7 @@ app.use(cookieParser()); // to read req.cookies
 
 // Routes
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/properties", propertyRouter);
 
 // Base Route
 app.get("/", (req: Request, res: Response) => {
