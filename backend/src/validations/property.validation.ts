@@ -73,24 +73,22 @@ export const createPropertySchema = z.object({
     { error: "Location details are required" },
   ),
 
-  // Assuming req.body is parsed as JSON. If using FormData (multipart),
-  // you might need z.coerce.number() instead of z.number()
-  pricePerNight: z
+  pricePerNight: z.coerce
     .number(requiredNum("Price per night"))
     .min(1, { error: "Price must be at least 1" }),
 
-  maxGuests: z
+  maxGuests: z.coerce
     .number(requiredNum("Max guests"))
     .int({ error: "Max guests must be a whole number" })
     .min(1, { error: "Must allow at least 1 guest" }),
 
-  bedrooms: z
+  bedrooms: z.coerce
     .number({ error: "Bedrooms must be a number" })
     .int({ error: "Bedrooms must be a whole number" })
     .min(0, { error: "Bedrooms cannot be negative" })
     .optional(), // Falls back to Mongoose default if not provided
 
-  bathrooms: z
+  bathrooms: z.coerce
     .number({ error: "Bathrooms must be a number" })
     .min(0, { error: "Bathrooms cannot be negative" })
     .optional(), // Intentionally omitting .int() in case of half-baths (e.g., 1.5)
