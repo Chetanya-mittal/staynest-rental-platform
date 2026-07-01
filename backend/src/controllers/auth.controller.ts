@@ -1,6 +1,5 @@
 import { Response, RequestHandler } from "express";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import env from "../config/env.js";
 import { User } from "../models/user.model.js";
@@ -10,6 +9,8 @@ import {
 } from "../utils/generateToken.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import { hashRefreshToken } from "../utils/hashRefreshToken.js";
 import { registerSchema, loginSchema } from "../validations/auth.validation.js";
 import { Session } from "../models/session.model.js";
 
@@ -21,11 +22,6 @@ const setRefreshTokenCookie = (res: Response, token: string) => {
     sameSite: "strict", // prevents CSRF
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
   });
-};
-
-// Reusable helper to hash the refreshToken
-const hashRefreshToken = (refreshToken: string): string => {
-  return crypto.createHash("sha256").update(refreshToken).digest("hex");
 };
 
 // @desc    Register new user
@@ -59,16 +55,15 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   setRefreshTokenCookie(res, refreshToken);
 
-  res.status(201).json({
-    success: true,
-    data: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      accessToken, // store in frontend state memory
-    },
-  });
+  const data = {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    accessToken, // store in frontend state memory
+  };
+
+  res.status(201).json(new ApiResponse(201, data));
 });
 
 // @desc    Login user
@@ -102,16 +97,15 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   setRefreshTokenCookie(res, refreshToken);
 
-  res.status(200).json({
-    success: true,
-    data: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      accessToken,
-    },
-  });
+  const data = {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    accessToken,
+  };
+
+  res.status(200).json(new ApiResponse(200, data));
 });
 
 // @desc    Get logged in user profile
@@ -158,9 +152,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
   setRefreshTokenCookie(res, newRefreshToken);
 
-  res
-    .status(200)
-    .json({ success: true, data: { accessToken: newAccessToken } });
+  res.status(200).json(new ApiResponse(200, { accessToken: newAccessToken }));
 });
 
 // @desc    Logout user
@@ -193,7 +185,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
     sameSite: "strict",
   });
 
-  res.status(200).json({ success: true, message: "Logged out successfully" });
+  res.status(200).json(new ApiResponse(200, null, "Logged out successfully"));
 });
 
 // @desc    Logout all
@@ -227,8 +219,9 @@ export const logoutAll = asyncHandler(async (req, res) => {
     sameSite: "strict",
   });
 
-  res.status(200).json({
-    success: true,
-    message: "Logged out from all devices successfully",
-  });
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, null, "Logged out from all devices successfully"),
+    );
 });
