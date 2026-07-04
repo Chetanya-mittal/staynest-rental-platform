@@ -9,6 +9,8 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   PORT: z.coerce.number().int().positive().default(5000),
+  
+  CORS_ORIGIN: z.string().default("http://localhost:5173"),
 
   MONGO_URI: z.string().min(1, { error: "MONGO_URI is required" }),
 

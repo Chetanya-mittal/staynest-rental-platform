@@ -19,7 +19,15 @@ if (env.NODE_ENV === "development") {
 } else {
   app.use(morgan("combined")); // for detailed logs
 }
-app.use(cors()); // to allow frontend to make request to backend
+app.use(
+  cors({
+    origin: env.CORS_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 200,
+  }),
+); // to allow frontend to make request to backend
 app.use(express.json()); // to read JSON from request body
 app.use(express.urlencoded({ extended: true })); // to read HTML form data
 app.use(cookieParser()); // to read req.cookies
