@@ -40,3 +40,10 @@ export interface Booking {
   status: "pending" | "confirmed" | "cancelled"
   createdAt: string
 }
+
+export interface Filters {
+  city: string
+  minPrice: string
+  maxPrice: string
+  guests: string
+}

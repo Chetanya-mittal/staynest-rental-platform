@@ -1,11 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Layout from "./components/custom/Layout"
+import Home from "./pages/Home"
 
-// Pages — we'll create these from Day 9 onwards
-const Home = () => (
-  <div className="container py-8">
-    <h1>Home — coming Day 9</h1>
-  </div>
-)
 const Login = () => (
   <div className="container py-8">
     <h1>Login — coming Day 10</h1>
@@ -21,9 +17,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
