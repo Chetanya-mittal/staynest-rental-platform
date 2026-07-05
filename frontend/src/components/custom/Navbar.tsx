@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Home, User, Menu, Moon, Sun } from "lucide-react"
+import { User, Menu, Moon, Sun } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -16,14 +16,14 @@ const Navbar = () => {
   const { resolvedTheme, toggleTheme } = useTheme()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background px-5">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link
           to="/"
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-primary transition-colors hover:opacity-90"
         >
-          <Home size={24} strokeWidth={2.5} />
+          <img src="/logo.png" alt="Logo" className="h-7"/>
           StayNest
         </Link>
 
