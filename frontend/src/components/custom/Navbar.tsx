@@ -43,7 +43,7 @@ const Navbar = () => {
           to="/"
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-primary transition-colors hover:opacity-90"
         >
-          <img src="/logo.png" alt="Logo" className="h-7" />
+          <img src="/logo.svg" alt="StayNest Logo" className="h-7" />
           StayNest
         </Link>
 
