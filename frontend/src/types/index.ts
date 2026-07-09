@@ -47,3 +47,10 @@ export interface Filters {
   maxPrice: string
   guests: string
 }
+
+export interface ApiResponse<T> {
+  statusCode: number
+  success: boolean
+  message: string
+  data: T | null
+}

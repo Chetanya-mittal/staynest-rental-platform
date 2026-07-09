@@ -1,6 +1,7 @@
 import axios from "axios"
 import env from "@/config/env"
 import { useAuthStore } from "@/stores/authStore"
+import { refreshTokenApi } from "./authApi"
 
 const axiosInstance = axios.create({
   baseURL: env.VITE_API_URL,
@@ -26,14 +27,10 @@ axiosInstance.interceptors.response.use(
       original._retry = true
 
       try {
-        const { data } = await axios.post(
-          `${env.VITE_API_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        )
+        const data = await refreshTokenApi();
 
-        useAuthStore.getState().setAccessToken(data.data.accessToken)
-        original.headers.Authorization = `Bearer ${data.data.accessToken}`
+        useAuthStore.getState().setAccessToken(data.data!.accessToken)
+        original.headers.Authorization = `Bearer ${data.data!.accessToken}`
         return axiosInstance(original) // retry original request
       } catch {
         useAuthStore.getState().logout()

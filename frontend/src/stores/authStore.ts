@@ -8,6 +8,7 @@ interface AuthStore {
   error: string | null
 
   setCredentials: (data: { user: User; accessToken: string }) => void
+  setUser: (user: User) => void
   setAccessToken: (token: string) => void
   setLoading: (isLoading: boolean) => void
   setError: (error: string | null) => void
@@ -28,6 +29,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       accessToken: data.accessToken,
       error: null,
     }),
+  setUser: (user) => set({ user }),
   setAccessToken: (token) => set({ accessToken: token }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
