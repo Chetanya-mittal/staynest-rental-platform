@@ -8,6 +8,49 @@ import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const normalizeLocationTerms = (value?: string) => {
+  if (!value) return [];
+
+  const trimmed = value.trim().replace(/\s+/g, " ");
+  if (!trimmed) return [];
+
+  return trimmed
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .flatMap((part) => {
+      const words = part.split(/\s+/).filter(Boolean);
+      return words.length > 1 ? [part, ...words] : [part];
+    });
+};
+
+const buildLocationSearchQuery = (
+  city?: string,
+  state?: string,
+  country?: string,
+) => {
+  const terms = [city, state, country]
+    .flatMap(normalizeLocationTerms)
+    .map((term) => term.toLowerCase())
+    .filter(Boolean);
+
+  if (terms.length === 0) {
+    return undefined;
+  }
+
+  const uniqueTerms = [...new Set(terms)];
+
+  return {
+    $or: uniqueTerms.flatMap((term) => [
+      { "location.city": { $regex: escapeRegex(term), $options: "i" } },
+      { "location.state": { $regex: escapeRegex(term), $options: "i" } },
+      { "location.country": { $regex: escapeRegex(term), $options: "i" } },
+    ]),
+  };
+};
+
 // @desc    Get all properties with search, filter, pagination
 // @route   GET /api/properties
 // @access  Public
@@ -17,17 +60,10 @@ export const getAllProperties = asyncHandler(async (req, res) => {
 
   const query: QueryFilter<IProperty> = { isAvailable: true };
 
-  if (city) {
-    // 'i' flag = case insensitive so 'mumbai' matches 'Mumbai'
-    query["location.city"] = { $regex: city, $options: "i" };
-  }
+  const locationSearchQuery = buildLocationSearchQuery(city, state, country);
 
-  if (state) {
-    query["location.state"] = { $regex: state, $options: "i" };
-  }
-
-  if (country) {
-    query["location.country"] = { $regex: country, $options: "i" };
+  if (locationSearchQuery) {
+    Object.assign(query, locationSearchQuery);
   }
 
   if (guests) {
@@ -48,7 +84,7 @@ export const getAllProperties = asyncHandler(async (req, res) => {
   // Run both queries in parallel for efficiency
   const [properties, total] = await Promise.all([
     Property.find(query)
-      .populate("host", "name email")
+      .populate("host", "name email role avatar")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limitNum),
@@ -76,7 +112,7 @@ export const getAllProperties = asyncHandler(async (req, res) => {
 export const getPropertyById = asyncHandler(async (req, res) => {
   const property = await Property.findById(req.params.id).populate(
     "host",
-    "name email",
+    "name email role avatar",
   );
 
   if (!property) {

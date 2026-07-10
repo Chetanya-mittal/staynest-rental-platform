@@ -41,16 +41,17 @@ export interface Booking {
   createdAt: string
 }
 
-export interface Filters {
-  city: string
-  minPrice: string
-  maxPrice: string
-  guests: string
-}
-
 export interface ApiResponse<T> {
   statusCode: number
   success: boolean
   message: string
   data: T | null
+}
+
+export interface PaginatedPropertiesData {
+  properties: Property[]
+  currentPage: number
+  totalPages: number
+  totalProperties: number
+  hasNextPage: boolean
 }

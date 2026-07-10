@@ -2,7 +2,15 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search } from "lucide-react"
-import type { Filters } from "@/types"
+
+interface Filters {
+  city?: string
+  state?: string
+  country?: string
+  minPrice?: string
+  maxPrice?: string
+  guests?: string
+}
 
 interface SearchFiltersProps {
   onSearch: (filters: Filters) => void
@@ -27,8 +35,8 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           className="flex flex-col gap-3 p-1 md:flex-row md:items-end"
         >
           <div className="flex-1">
-            <label className="ml-1 mb-1 block text-xs font-medium text-muted-foreground">
-              City
+            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
+              Where
             </label>
             <input
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
@@ -39,7 +47,7 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           </div>
 
           <div className="flex-1">
-            <label className="ml-1 mb-1 block text-xs font-medium text-muted-foreground">
+            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
               Min price
             </label>
             <input
@@ -52,7 +60,7 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           </div>
 
           <div className="flex-1">
-            <label className="ml-1 mb-1 block text-xs font-medium text-muted-foreground">
+            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
               Max price
             </label>
             <input
@@ -65,7 +73,7 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           </div>
 
           <div className="flex-1">
-            <label className="ml-1 mb-1 block text-xs font-medium text-muted-foreground">
+            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
               Guests
             </label>
             <input

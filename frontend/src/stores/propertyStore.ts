@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { Property } from "@/types" 
+import type { Property } from "@/types"
 
 interface PropertyStore {
   properties: Property[]
@@ -9,12 +9,14 @@ interface PropertyStore {
   totalPages: number
   currentPage: number
   totalProperties: number
+  hasNextPage: boolean
 
   setProperties: (data: {
     properties: Property[]
     totalPages: number
     currentPage: number
     totalProperties: number
+    hasNextPage: boolean
   }) => void
   setSelectedProperty: (property: Property | null) => void
   setLoading: (isLoading: boolean) => void
@@ -30,6 +32,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
   totalPages: 1,
   currentPage: 1,
   totalProperties: 0,
+  hasNextPage: false,
 
   // Actions
   setProperties: (data) =>
@@ -38,6 +41,7 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
       totalPages: data.totalPages,
       currentPage: data.currentPage,
       totalProperties: data.totalProperties,
+      hasNextPage: data.hasNextPage,
     }),
   setSelectedProperty: (property) => set({ selectedProperty: property }),
   setLoading: (isLoading) => set({ isLoading }),
