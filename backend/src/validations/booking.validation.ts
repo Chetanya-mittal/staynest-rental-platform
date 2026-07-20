@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+// Normalizes any Date to UTC midnight of its own UTC calendar day
+const toUTCMidnight = (d: Date) =>
+  new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+
 export const createBookingSchema = z
   .object({
     // Mongoose ObjectIds come through as strings in the JSON body
@@ -23,16 +27,51 @@ export const createBookingSchema = z
     error: "Check-out date must be after the check-in date",
     path: ["checkOut"], // Attaches the error specifically to the checkOut field
   })
-  // Optional: Ensure checkIn is not in the past
+  // Ensure checkIn is not in the past
   .refine(
     (data) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Strip time to compare just the dates
-      return data.checkIn >= today;
+      const today = toUTCMidnight(new Date());
+      const checkInDay = toUTCMidnight(data.checkIn);
+      return checkInDay >= today;
     },
     {
       error: "Check-in date cannot be in the past",
       path: ["checkIn"],
+    },
+  )
+  .refine(
+    (data) => {
+      const today = toUTCMidnight(new Date());
+      const maxBookingDate = new Date(today);
+      maxBookingDate.setUTCMonth(maxBookingDate.getUTCMonth() + 2);
+      return data.checkIn <= maxBookingDate;
+    },
+    {
+      error: "Bookings can only be made up to 2 months in advance",
+      path: ["checkIn"],
+    },
+  )
+  .refine(
+    (data) => {
+      const today = toUTCMidnight(new Date());
+      const maxBookingDate = new Date(today);
+      maxBookingDate.setUTCMonth(maxBookingDate.getUTCMonth() + 2);
+      return data.checkOut <= maxBookingDate;
+    },
+    {
+      error: "Bookings can only be made up to 2 months in advance",
+      path: ["checkOut"],
+    },
+  )
+  .refine(
+    (data) => {
+      const oneMonthLater = new Date(data.checkIn);
+      oneMonthLater.setUTCMonth(oneMonthLater.getUTCMonth() + 1);
+      return data.checkOut <= oneMonthLater;
+    },
+    {
+      error: "Booking duration cannot exceed 1 month",
+      path: ["checkOut"],
     },
   );
 

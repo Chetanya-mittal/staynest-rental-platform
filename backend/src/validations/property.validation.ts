@@ -103,3 +103,9 @@ export const createPropertySchema = z.object({
 });
 
 export type CreatePropertyType = z.infer<typeof createPropertySchema>;
+
+export const updatePropertySchema = createPropertySchema.partial().extend({
+  location: createPropertySchema.shape.location.partial().optional(),
+});
+
+export type UpdatePropertyType = z.infer<typeof updatePropertySchema>;

@@ -35,10 +35,14 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           className="flex flex-col gap-3 p-1 md:flex-row md:items-end"
         >
           <div className="flex-1">
-            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
-              Where
+            <label
+              htmlFor="destination"
+              className="block text-xs font-medium text-muted-foreground"
+            >
+              Destination
             </label>
             <input
+              id="destination"
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
               placeholder="e.g. Mumbai"
               value={city}
@@ -47,12 +51,18 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           </div>
 
           <div className="flex-1">
-            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
+            <label
+              htmlFor="min"
+              className="block text-xs font-medium text-muted-foreground"
+            >
               Min price
             </label>
             <input
+              id="min"
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
               type="number"
+              min={0}
+              step={1}
               placeholder="₹0"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
@@ -60,12 +70,18 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           </div>
 
           <div className="flex-1">
-            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
+            <label
+              htmlFor="max"
+              className="block text-xs font-medium text-muted-foreground"
+            >
               Max price
             </label>
             <input
+              id="max"
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
               type="number"
+              min={0}
+              step={1}
               placeholder="₹10000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
@@ -73,12 +89,18 @@ const SearchFilters = ({ onSearch }: SearchFiltersProps) => {
           </div>
 
           <div className="flex-1">
-            <label className="mb-1 ml-1 block text-xs font-medium text-muted-foreground">
+            <label
+              htmlFor="guests"
+              className="block text-xs font-medium text-muted-foreground"
+            >
               Guests
             </label>
             <input
+              id="guests"
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
               type="number"
+              min={1}
+              step={1}
               placeholder="1"
               value={guests}
               onChange={(e) => setGuests(e.target.value)}

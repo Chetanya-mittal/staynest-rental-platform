@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from "react"
+import { type ReactNode } from "react"
 import { Link } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
@@ -19,13 +19,6 @@ const AuthCard = ({
   footerLinkText,
   footerLinkTo,
 }: AuthCardProps) => {
-
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, []);
 
   return (
     <div className="flex min-h-screen justify-center px-4">

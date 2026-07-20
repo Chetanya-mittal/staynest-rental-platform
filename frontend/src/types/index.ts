@@ -30,8 +30,15 @@ export interface Property {
 
 export interface Booking {
   _id: string
-  property: Property
-  guest: User
+  property: {
+    _id: string
+    host: string
+    title: string
+    location: Location
+    pricePerNight: number
+    images: string[]
+  }
+  guest: { _id: string; name: string; email: string }
   checkIn: string
   checkOut: string
   totalPrice: number

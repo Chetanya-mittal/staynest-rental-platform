@@ -10,14 +10,10 @@ import { getErrorMessage } from "@/utils/getErrorMessage"
 const Home = () => {
   const {
     properties,
-    isLoading,
-    error,
     currentPage,
     totalPages,
     totalProperties,
     setProperties,
-    setLoading,
-    setError,
   } = usePropertyStore((state) => state)
 
   const [filters, setFilters] = useState<PropertyFilters>({
@@ -30,6 +26,8 @@ const Home = () => {
     page: 1,
     limit: 8,
   })
+  const [isLoading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchProperties = async () => {

@@ -3,12 +3,14 @@ import { Property, IProperty } from "../models/property.model.js";
 import {
   propertyQuerySchema,
   createPropertySchema,
+  updatePropertySchema,
 } from "../validations/property.validation.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
-const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegex = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const normalizeLocationTerms = (value?: string) => {
   if (!value) return [];
@@ -169,13 +171,12 @@ export const updateProperty = asyncHandler(async (req, res) => {
     throw new AppError("Property not found", 404);
   }
 
-  const updated = await Property.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true, runValidators: true }, // return updated doc + run schema validators
-  );
+  const updated = updatePropertySchema.parse(req.body);
 
-  res.status(200).json(new ApiResponse(200, { updated }));
+  property.set(updated);
+  await property.save();
+
+  res.status(200).json(new ApiResponse(200, { property }));
 });
 
 // @desc    Delete a property

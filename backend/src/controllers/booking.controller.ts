@@ -21,6 +21,14 @@ export const createBooking = asyncHandler(async (req, res) => {
     throw new AppError("Property not found", 404);
   }
 
+  // Check property is available for booking
+  if (!property.isAvailable) {
+    throw new AppError(
+      "This property is currently not available for booking",
+      403,
+    );
+  }
+
   // Prevent host from booking their own property
   if (property.host.toString() === req.user?._id.toString()) {
     throw new AppError("You cannot book your own property", 400);
@@ -65,7 +73,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
   // Populate and return
   const populated = await booking.populate([
-    { path: "property", select: "title location pricePerNight images" },
+    { path: "property", select: "title location pricePerNight images host" },
     { path: "guest", select: "name email" },
   ]);
 
@@ -80,7 +88,10 @@ export const getMyBookings = asyncHandler(async (req, res) => {
     guest: req.user?._id,
     status: { $ne: "cancelled" },
   })
-    .populate("property", "title location images pricePerNight")
+    .populate([
+      { path: "property", select: "title location pricePerNight images host" },
+      { path: "guest", select: "name email" },
+    ])
     .sort({ createdAt: -1 });
 
   res.status(200).json(new ApiResponse(200, { bookings }));
@@ -101,8 +112,10 @@ export const getHostBookings = asyncHandler(async (req, res) => {
     property: { $in: propertyIds },
     status: { $ne: "cancelled" },
   })
-    .populate("property", "title location")
-    .populate("guest", "name email")
+    .populate([
+    { path: "property", select: "title location pricePerNight images host" },
+    { path: "guest", select: "name email" },
+  ])
     .sort({ checkIn: 1 }); // upcoming first
 
   res.status(200).json(new ApiResponse(200, { bookings }));
