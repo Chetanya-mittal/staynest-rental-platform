@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { useState } from "react"
 import { loginSchema, type LoginType } from "@/validations/authValidation"
 import { loginApi } from "../api/authApi"
@@ -11,9 +11,12 @@ import { Button } from "@/components/ui/button"
 
 const Login = () => {
   const navigate = useNavigate()
+  const location = useLocation();
   const setCredentials = useAuthStore((state) => state.setCredentials)
   const [serverError, setServerError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const from = (location.state as { from?: string })?.from || '/';
 
   const {
     register,
@@ -32,7 +35,7 @@ const Login = () => {
       const { accessToken, ...user } = res.data!
 
       setCredentials({ user, accessToken })
-      navigate("/")
+      navigate(from, { replace: true });
     } catch (err: unknown) {
       setServerError(getErrorMessage(err))
     } finally {

@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Plus, Pencil, Trash2, Home, Users } from "lucide-react"
 import PropertyCard from "@/components/custom/PropertyCard"
 import ConfirmDialog from "@/components/custom/ConfirmDialog"
 import LoadingScreen from "@/components/custom/LoadingScreen"
 import { getMyPropertiesApi, deletePropertyApi } from "../api/propertyApi"
 import type { PropertyWithoutPopulate } from "@/types"
-import { useAuthStore } from "@/stores/authStore"
 import { getErrorMessage } from "@/utils/getErrorMessage"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent } from "@/components/ui/card"
 
 const HostDashboard = () => {
-  const user = useAuthStore((state) => state.user)
-  const navigate = useNavigate()
 
   const [properties, setProperties] = useState<PropertyWithoutPopulate[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -23,11 +20,6 @@ const HostDashboard = () => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login")
-      return
-    }
-
     const fetchMyProperties = async () => {
       setIsLoading(true)
       try {
@@ -41,7 +33,7 @@ const HostDashboard = () => {
     }
 
     fetchMyProperties()
-  }, [user, navigate])
+  }, [])
 
   const handleDeleteConfirm = async () => {
     if (!deleteTargetId) return

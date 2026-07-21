@@ -4,14 +4,12 @@ import PropertyForm from "@/components/custom/PropertyForm"
 import LoadingScreen from "@/components/custom/LoadingScreen"
 import { getPropertyByIdApi, updatePropertyApi } from "@/api/propertyApi"
 import type { PropertyPayload, Property } from "@/types"
-import { useAuthStore } from "@/stores/authStore"
 import { getErrorMessage } from "@/utils/getErrorMessage"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const EditListing = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const user = useAuthStore((state) => state.user)
 
   const [property, setProperty] = useState<Property | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -19,10 +17,6 @@ const EditListing = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login")
-      return
-    }
     if (!id) return
 
     const fetchProperty = async () => {
@@ -37,7 +31,7 @@ const EditListing = () => {
     }
 
     fetchProperty()
-  }, [id, user, navigate])
+  }, [id])
 
   const handleSubmit = async (payload: PropertyPayload) => {
     if (!id) return

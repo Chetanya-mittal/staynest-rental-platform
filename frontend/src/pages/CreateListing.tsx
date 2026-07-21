@@ -1,21 +1,15 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import PropertyForm from "@/components/custom/PropertyForm"
 import { createPropertyApi } from "@/api/propertyApi"
 import type { PropertyPayload } from "@/types"
-import { useAuthStore } from "@/stores/authStore"
 import { getErrorMessage } from "@/utils/getErrorMessage"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const CreateListing = () => {
   const navigate = useNavigate()
-  const user = useAuthStore((state) => state.user)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!user) navigate("/login")
-  }, [user, navigate])
 
   const handleSubmit = async (payload: PropertyPayload) => {
     setError(null)
@@ -29,8 +23,6 @@ const CreateListing = () => {
       setIsSubmitting(false)
     }
   }
-
-  if (!user) return null
 
   return (
     <div className="container flex flex-col items-center">

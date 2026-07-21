@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { Link, useNavigate } from "react-router-dom"
 import { User, Menu, Moon, Sun, LogOut } from "lucide-react"
 import { useAuthStore } from "@/stores/authStore"
@@ -15,12 +16,18 @@ import {
 import { useTheme } from "@/components/theme-provider"
 
 const Navbar = () => {
+  const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const { resolvedTheme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsOpen(false)
+  }, [location.pathname])
 
   const handleLogout = async () => {
     setServerError(null)
@@ -142,6 +149,13 @@ const Navbar = () => {
                 >
                   Dashboard
                 </Link>
+                <Link
+                  to="/bookings/my"
+                  onClick={() => setIsOpen(false)}
+                  className="text-lg font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  My Bookings
+                </Link>
               </div>
 
               <div className="flex flex-col gap-3 p-5 pb-6">
@@ -165,10 +179,7 @@ const Navbar = () => {
                 </Button>
 
                 {user ? (
-                  <Button
-                    onClick={handleLogout}
-                    className="w-full"
-                  >
+                  <Button onClick={handleLogout} className="w-full">
                     Log out
                   </Button>
                 ) : (

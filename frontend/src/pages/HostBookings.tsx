@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { MapPin, Calendar, Compass } from "lucide-react"
 import LoadingScreen from "@/components/custom/LoadingScreen"
 import { getHostBookingsApi } from "@/api/bookingApi"
 import type { Booking } from "@/types"
-import { useAuthStore } from "@/stores/authStore"
 import { getErrorMessage } from "@/utils/getErrorMessage"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -18,19 +17,11 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
 }
 
 const HostBookings = () => {
-  const user = useAuthStore((state) => state.user)
-  const navigate = useNavigate()
-
   const [bookings, setBookings] = useState<Booking[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login")
-      return
-    }
-
     const fetchBookings = async () => {
       setIsLoading(true)
       setError(null)
@@ -45,7 +36,7 @@ const HostBookings = () => {
     }
 
     fetchBookings()
-  }, [user, navigate])
+  }, [])
 
   if (isLoading) return <LoadingScreen />
 

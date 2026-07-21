@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { MapPin, Calendar, X, Compass } from "lucide-react"
 import ConfirmDialog from "@/components/custom/ConfirmDialog"
 import LoadingScreen from "@/components/custom/LoadingScreen"
 import { getMyBookingsApi, cancelBookingApi } from "@/api/bookingApi"
 import type { Booking } from "@/types"
-import { useAuthStore } from "@/stores/authStore"
 import { getErrorMessage } from "@/utils/getErrorMessage"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -19,8 +18,6 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
 }
 
 const MyBookings = () => {
-  const user = useAuthStore((state) => state.user)
-  const navigate = useNavigate()
 
   const [bookings, setBookings] = useState<Booking[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -29,11 +26,6 @@ const MyBookings = () => {
   const [isCancelling, setIsCancelling] = useState(false)
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login")
-      return
-    }
-
     const fetchBookings = async () => {
       setIsLoading(true)
       setError(null)
@@ -48,7 +40,7 @@ const MyBookings = () => {
     }
 
     fetchBookings()
-  }, [user, navigate])
+  }, [])
 
   const handleCancelConfirm = async () => {
     if (!cancelTargetId) return
