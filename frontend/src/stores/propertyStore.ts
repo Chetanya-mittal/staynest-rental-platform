@@ -1,8 +1,8 @@
 import { create } from "zustand"
-import type { Property } from "@/types"
+import type { Property, PropertyWithoutPopulate } from "@/types"
 
 interface PropertyStore {
-  properties: Property[]
+  properties: PropertyWithoutPopulate[]
   selectedProperty: Property | null
   totalPages: number
   currentPage: number
@@ -10,7 +10,7 @@ interface PropertyStore {
   hasNextPage: boolean
 
   setProperties: (data: {
-    properties: Property[]
+    properties: PropertyWithoutPopulate[]
     totalPages: number
     currentPage: number
     totalProperties: number

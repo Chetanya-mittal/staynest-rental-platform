@@ -28,6 +28,34 @@ export interface Property {
   createdAt: string
 }
 
+export interface PropertyWithoutPopulate {
+  _id: string
+  host: string
+  title: string
+  description: string
+  location: Location
+  pricePerNight: number
+  maxGuests: number
+  bedrooms: number
+  bathrooms: number
+  amenities: string[]
+  images: string[]
+  isAvailable: boolean
+  createdAt: string
+}
+
+export interface PropertyPayload {
+  title: string
+  description: string
+  location: Location
+  pricePerNight: number
+  maxGuests: number
+  bedrooms: number
+  bathrooms: number
+  amenities?: string[]
+  images?: string[]
+}
+
 export interface Booking {
   _id: string
   property: {
@@ -56,7 +84,7 @@ export interface ApiResponse<T> {
 }
 
 export interface PaginatedPropertiesData {
-  properties: Property[]
+  properties: PropertyWithoutPopulate[]
   currentPage: number
   totalPages: number
   totalProperties: number

@@ -85,11 +85,7 @@ export const getAllProperties = asyncHandler(async (req, res) => {
 
   // Run both queries in parallel for efficiency
   const [properties, total] = await Promise.all([
-    Property.find(query)
-      .populate("host", "name email role avatar")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limitNum),
+    Property.find(query).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
     Property.countDocuments(query),
   ]);
 

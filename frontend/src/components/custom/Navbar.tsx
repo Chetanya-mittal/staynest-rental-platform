@@ -59,7 +59,13 @@ const Navbar = () => {
             to="/host/dashboard"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            Become a host
+            Dashboard
+          </Link>
+          <Link
+            to="/bookings/my"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            My Bookings
           </Link>
         </nav>
 
@@ -134,7 +140,7 @@ const Navbar = () => {
                   onClick={() => setIsOpen(false)}
                   className="text-lg font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  Become a host
+                  Dashboard
                 </Link>
               </div>
 

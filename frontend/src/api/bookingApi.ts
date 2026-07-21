@@ -33,6 +33,11 @@ export const getMyBookingsApi = async (): Promise<ApiResponse<{ bookings: Bookin
   return res.data
 }
 
+export const getHostBookingsApi = async (): Promise<ApiResponse<{ bookings: Booking[] }>> => {
+  const res = await axiosInstance.get<ApiResponse<{ bookings: Booking[] }>>("/bookings/host")
+  return res.data
+}
+
 export const cancelBookingApi = async (
   bookingId: string
 ): Promise<ApiResponse<null>> => {
