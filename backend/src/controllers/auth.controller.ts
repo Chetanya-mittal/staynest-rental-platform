@@ -16,10 +16,11 @@ import { Session } from "../models/session.model.js";
 
 // Reusable helper to set the refresh token cookie
 const setRefreshTokenCookie = (res: Response, token: string) => {
+  const isProduction = env.NODE_ENV === 'production';
   res.cookie("refreshToken", token, {
     httpOnly: true, // JS cannot read this
-    secure: env.NODE_ENV === "production", // HTTPS only in production
-    sameSite: "strict", // prevents CSRF
+    secure: isProduction, // HTTPS only in production
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
   });
 };
@@ -179,10 +180,12 @@ export const logoutUser = asyncHandler(async (req, res) => {
   session.revoke = true;
   await session.save();
 
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
   });
 
   res.status(200).json(new ApiResponse(200, null, "Logged out successfully"));
