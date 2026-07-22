@@ -180,7 +180,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
   session.revoke = true;
   await session.save();
 
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = env.NODE_ENV === 'production';
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
@@ -216,10 +216,12 @@ export const logoutAll = asyncHandler(async (req, res) => {
     },
   );
 
+  const isProduction = env.NODE_ENV === 'production';
+
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
   });
 
   res

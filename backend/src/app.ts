@@ -15,9 +15,9 @@ const app: Application = express();
 // Middleware
 app.use(helmet()); // for security
 if (env.NODE_ENV === "development") {
-  app.use(morgan("dev")); // for concise logs
+  app.use(morgan("dev"));
 } else {
-  app.use(morgan("combined")); // for detailed logs
+  app.use(morgan("tiny"));
 }
 app.use(
   cors({
